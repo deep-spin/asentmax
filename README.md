@@ -2,6 +2,8 @@
 
 Code for [Long-Context Generalization with Sparse Attention](https://arxiv.org/abs/2506.16640).
 
+For the attention module, see [attention.py](https://github.com/deep-spin/asentmax/blob/main/attention.py#L452), which can be integrated into torchtitan.
+
 ## Requirements
 
 Install [AdaSplash](https://github.com/deep-spin/adasplash) for the entmax attention kernel.
