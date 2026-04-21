@@ -1,0 +1,22 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - data: null
+  - callbacks: default
+  - model: default
+  - logger: null
+  - trainer: default
+  - paths: default
+  - extras: default
+  - hydra: default
+
+trainer:
+  accelerator: gpu
+  devices: [0]
+
+task_name: null
+
+tags: []
+
+ckpt_path: null

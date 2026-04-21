@@ -1,0 +1,27 @@
+_target_: lightning.pytorch.trainer.Trainer
+
+default_root_dir: ${paths.output_dir}
+
+min_epochs: 1
+max_epochs: 40
+gradient_clip_val: 1.0
+
+#accelerator: cpu
+#devices: 1
+accelerator: gpu
+devices: [0]
+matmul_precision: high # Trade-off precision-performance in Tensor Cores e.g. RTX A6000
+
+# Full bf16 precision: params, activations, and KV cache all live in bf16.
+precision: bf16-true
+
+# perform a validation loop every N training epochs
+#check_val_every_n_epoch: 1
+
+val_check_interval: 5000
+
+# set True to to ensure deterministic results
+# makes training slower but gives more reproducibility than just setting seeds
+deterministic: False
+
+enable_checkpointing: True

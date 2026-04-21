@@ -1,0 +1,47 @@
+# @package _global_
+
+defaults:
+  - override /model: sparse_gemma
+  - override /data: sort
+  - override /logger: wandb
+  - override /paths: default
+
+task_name: "entmax-sort"
+tags: ['entmax', 'sort']
+
+logger:
+  wandb:
+    project: "Sort-40M vocab=32"
+    save_dir: ${callbacks.model_checkpoint.dirpath}
+
+callbacks:
+  model_checkpoint:
+    monitor: "val/bleu/dataloader_idx_2"
+
+model:
+  loss_type: target
+
+  optimizer:
+    weight_decay: 0.0
+
+  net:
+    num_attention_heads: 8
+    num_hidden_layers: 2
+    hidden_size: 256
+    intermediate_size: 1024
+    head_dim: 32
+
+  generation_multiplier: 2.1
+  generation:
+    max_length: null
+    num_beams: 1
+
+  scheduler:
+    instance:
+      num_warmup_steps: 20000
+      num_training_steps: 312500
+
+trainer:
+  max_epochs: 1
+  val_check_interval: 0.05
+  num_sanity_val_steps: 0

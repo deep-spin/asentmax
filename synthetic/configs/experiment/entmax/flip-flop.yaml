@@ -1,0 +1,58 @@
+# @package _global_
+
+defaults:
+  - override /model: sparse_gemma
+  - override /data: flip_flop
+  - override /logger: wandb
+  - override /paths: default
+
+
+task_name: "entmax-flip-flop"
+tags: ['entmax', 'flip-flop']
+
+logger:
+  wandb:
+    project: "Flip-Flop L=4 write_prob=0_1"
+    save_dir: ${callbacks.model_checkpoint.dirpath}
+
+callbacks:
+  model_checkpoint:
+    monitor: "val/acc/dataloader_idx_3"
+
+
+model:
+  loss_type: target
+
+  metrics:
+    acc:
+      _target_: src.metrics.TextExactMatch
+
+  metrics_config:
+    train: [ ]
+    val: [ acc ]
+    test: [ acc ]
+
+  optimizer:
+    weight_decay: 0.0
+
+  net:
+    num_attention_heads: 8
+    num_hidden_layers: 4
+    hidden_size: 256
+    intermediate_size: 512
+
+  generation_multiplier: 1.2
+  generation:
+    max_length: null
+    num_beams: 1
+
+  scheduler:
+    instance:
+      num_warmup_steps: 10000
+      num_training_steps: 78125
+
+trainer:
+  max_epochs: 1
+  val_check_interval: 0.1
+  num_sanity_val_steps: 0
+

@@ -1,0 +1,71 @@
+_target_: src.models.src_trg_module.SrcTrgLitModule
+_partial_: true # Required to pass datamodule to model
+
+
+criterion:
+  _target_: torch.nn.CrossEntropyLoss
+
+metrics:
+  bleu:
+    _target_: src.metrics.WrapBleu
+    n_gram: 4
+    lowercase: False
+  acc:
+    _target_: src.metrics.TextExactMatch
+
+metrics_config:
+  train: [ ]
+  val: [ acc, bleu]
+  test: [ acc, bleu]
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.00001
+  weight_decay: 0.0
+  betas: [0.9, 0.99]
+
+scheduler:
+  params:
+    monitor: val/loss
+    interval: step
+    frequency: 1
+  instance:
+    _target_: transformers.get_cosine_schedule_with_warmup
+    _partial_: true
+    num_warmup_steps: 10000
+    num_training_steps: 400000
+
+net:
+  _target_: src.models.net_wrapper.HFWrapper
+  _partial_: true
+
+  model_class: src.models.architectures.sparse_gemma.SparseGemma2ForCausalLM
+  from_pretrained: "google/gemma-2-2b"
+  num_attention_heads: 8
+  num_key_value_heads: ${.num_attention_heads}
+  torch_dtype: bfloat16
+  max_position_embeddings: 131072
+  sliding_window: ${.max_position_embeddings}
+  attn_logit_softcapping: null
+  final_logit_softcapping: null
+  tie_word_embeddings: False
+  entmax_alpha: 1.5
+  attention_dropout: 0.0
+  attn_implementation: eager # adasplash/entmax must be run with eager. softmax can be run with flash_attention_2
+  use_fast_attn: True
+  apply_rotary: False
+  apply_nape: True
+
+  rope_scaling:
+    rope_type: default
+
+generation:
+  return_dict_in_generate: False
+  output_scores: False
+  top_p: 1
+  top_k: 1
+  add_pad_token_id: True
+  num_beams: 1
+
+

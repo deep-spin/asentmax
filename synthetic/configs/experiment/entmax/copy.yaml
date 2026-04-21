@@ -1,0 +1,47 @@
+# @package _global_
+
+defaults:
+  - override /model: sparse_gemma
+  - override /data: copy
+  - override /logger: wandb
+  - override /paths: default
+
+task_name: "entmax-copy"
+tags: ["entmax", "copy"]
+
+logger:
+  wandb:
+    project: "Copy L=2 vocab=32"
+    save_dir: ${callbacks.model_checkpoint.dirpath}
+
+callbacks:
+  model_checkpoint:
+    monitor: "val/acc/dataloader_idx_3"
+
+model:
+  loss_type: target
+  optimizer:
+    weight_decay: 0.0
+
+  net:
+    hidden_size: 256
+    num_attention_heads: 16
+    head_dim: 16
+    intermediate_size: 1024
+    num_hidden_layers: 2
+
+  generation_multiplier: 2.2
+  generation:
+    max_length: null
+    num_beams: 1
+
+  scheduler:
+    instance:
+      num_warmup_steps: 20000
+      num_training_steps: 156250
+
+
+trainer:
+  max_epochs: 1
+  val_check_interval: 0.1
+  num_sanity_val_steps: 0

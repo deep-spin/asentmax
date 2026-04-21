@@ -1,0 +1,49 @@
+# @package _global_
+
+defaults:
+  - override /model: sparse_gemma
+  - override /data: mqmtar
+  - override /logger: wandb
+  - override /paths: default
+
+task_name: "entmax-mqmtar"
+tags: ['entmax', 'mqmtar']
+
+logger:
+  wandb:
+    project: "MQMTAR-50M kv-len=2 num_kv=80 num_q=4"
+    save_dir: ${callbacks.model_checkpoint.dirpath}
+
+callbacks:
+  model_checkpoint:
+    monitor: "val/acc/dataloader_idx_4"
+
+model:
+  loss_type: target
+
+  optimizer:
+    weight_decay: 0.0
+
+  net:
+    num_hidden_layers: 4
+    hidden_size: 512
+    intermediate_size: 1024
+    num_attention_heads: 16
+    head_dim: 32
+
+  generation_multiplier: 2.2
+  generation:
+    max_length: null
+    num_beams: 1
+
+  scheduler:
+    instance:
+#      _target_: transformers.get_polynomial_decay_schedule_with_warmup
+#      power: 3
+      num_warmup_steps: 20000
+      num_training_steps: 390625
+
+trainer:
+  max_epochs: 1
+  val_check_interval: 0.05
+  num_sanity_val_steps: 0

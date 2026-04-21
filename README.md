@@ -10,6 +10,9 @@ Install [AdaSplash](https://github.com/deep-spin/adasplash) for the entmax atten
 
 WIP
 
+## Experiments with Synthetic Data
+[https://github.com/deep-spin/asentmax/tree/main/synthetic](https://github.com/deep-spin/asentmax/tree/main/synthetic)
+
 ## Data Generation
 
 The data generation script `scripts/generate_data.py` creates two files per split, e.g., `train.src` and `train.trg`.

@@ -1,0 +1,47 @@
+# @package _global_
+
+defaults:
+  - override /model: sparse_gemma
+  - override /data: reverse
+  - override /logger: wandb
+  - override /paths: default
+
+task_name: "entmax-reverse"
+tags: ['entmax', 'reverse']
+
+logger:
+  wandb:
+    project: "Reverse-30M vocab=32"
+    save_dir: ${callbacks.model_checkpoint.dirpath}
+
+callbacks:
+  model_checkpoint:
+    monitor: "val/acc/dataloader_idx_3"
+
+model:
+  loss_type: target
+
+  optimizer:
+    weight_decay: 0.0
+
+  net:
+    num_attention_heads: 8
+    attn_implementation: eager
+    num_hidden_layers: 6
+    hidden_size: 256
+    head_dim: 32
+    intermediate_size: 1024
+
+  generation_multiplier: 2.2
+  generation:
+    max_length: null
+
+  scheduler:
+    instance:
+      num_warmup_steps: 20000
+      num_training_steps: 234375
+
+trainer:
+  max_epochs: 1
+  val_check_interval: 0.05
+  num_sanity_val_steps: 0

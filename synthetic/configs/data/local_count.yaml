@@ -1,0 +1,49 @@
+_target_: src.data.datamodule.DataModule
+
+data_provider:
+  _target_: src.data.data_provider.TokenClassificationFromFiles
+  path: ${oc.env:DATA_PATH}/local_count/10M-tr-64-128_V-16_reps-48/
+
+
+
+data_processor:
+  _partial_: true
+  _target_: src.data.data_processor.TokenClassificationProcessor
+
+
+data_processor_kwargs:
+  input_pattern: "{bos_token} {text} {eos_token}"
+  target_pattern: "{no_loss} {text} {no_loss}"
+  tokenizer:
+    _target_: src.data.tokenizers.simple_tokenizer.SimpleTokenizer
+    max_vocab_id: 15
+
+
+data_loader_kwargs:
+  num_workers: 4
+  pin_memory: True
+
+
+collator:
+  _target_: src.data.collate.CollateTokenClassification
+  _partial_: true
+  tokenizer: ${..data_processor_kwargs.tokenizer}
+
+
+batch_config:
+  train:
+    type: samples
+    size: 128
+    collator:
+      right_pad: True
+  valid:
+    type: samples
+    size: 8
+    collator:
+      right_pad: True
+  test:
+    type: samples
+    size: 2
+    collator:
+      right_pad: True
+
