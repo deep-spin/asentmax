@@ -205,3 +205,21 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# macOS
+.DS_Store
+# Python
+__pycache__/
+*.pyc
+*.pyo
+# IDE
+.idea/
+# Environment
+.env
+# Hydra / Lightning outputs
+logs/
+outputs/
+# Jupyter
+.ipynb_checkpoints/
+# Claude Code
+.claude/
